@@ -1,0 +1,10 @@
+/* BEGIN: Navbar Styles */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f2f2f2;
+    padding: 10px;
+}
+
+/* END: Navbar Styles */

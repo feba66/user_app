@@ -1,0 +1,14 @@
+{% extends 'base.html' %} {% block header %}
+<h1>{% block title %}User Profile{% endblock %}</h1>
+{% endblock %} {% block content %} {% if session %}
+<div>
+  <label for="username">Username:</label>
+  <span id="username">{{ username }}</span>
+</div>
+<div>
+  <label for="email">Email:</label>
+  <span id="email">{{ email }}</span>
+</div>
+{% else %}
+<p>You are not logged in. Please login to view your profile.</p>
+{% endif %} {% endblock %}

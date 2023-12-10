@@ -35,9 +35,6 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Code to login users using the userstore
-    # ...
-
     # check the request method
     if request.method == 'POST':
         # get the name and password from the request
@@ -78,10 +75,6 @@ def user():
     user = userstore.get_user(user_id)
     # return the user page with the user
     return render_template('user.html', username=user.name, email=user.email)
-
-# Other routes and code...
-# ...
-# index route which should return a form to login or register
 
 
 @app.route('/')

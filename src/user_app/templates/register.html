@@ -13,4 +13,7 @@
 
   <input type="submit" value="Register" />
 </form>
-{% endblock %}
+{% if error %}
+<h2 style="color: red">{{ error }}</h2>
+
+{% endif %} {% endblock %}

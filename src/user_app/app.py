@@ -1,13 +1,27 @@
 from flask import Flask, redirect, render_template, request, session, url_for
 from user_app.userstore import UserStore
-from user_app.models import User, random_string_generator
+from user_app.classes import random_string_generator
+from user_app.db import db_session, init_db
+from user_app.models import User
 # flask app that uses the userstore to register and login users, and stores the user id in the session
 app = Flask(__name__)
 app.secret_key = random_string_generator(64)
-userstore = UserStore()
+init_db()
+try:
+    with open('pepper.txt', 'r') as f:
+        pepper = f.read()
+except FileNotFoundError:
+    pepper = random_string_generator(64)
+    with open('pepper.txt', 'w') as f:
+        f.write(pepper)
+
+
+userstore = UserStore(db_session=db_session, pepper=pepper)
 
 
 # register page which should return a form to register
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     # check the request method
@@ -18,9 +32,9 @@ def register():
         email = request.form.get('email')
         # register the user
         user = userstore.register_user(name, password, email)
-        if not user:
+        if isinstance(user, str):
             # return an error message
-            return "User already exists"
+            return render_template('register.html', error=user)
         # store user id in session
         session['user_id'] = user.id
         session['user_name'] = user.name
@@ -42,9 +56,9 @@ def login():
         password = request.form.get('password')
         # login the user
         user = userstore.login_user(name, password)
-        if not user:
+        if isinstance(user, str):
             # return an error message
-            return "User doesn't exist"
+            return render_template('login.html', error=user)
         # store user id in session
         session['user_id'] = user.id
         session['user_name'] = user.name
@@ -63,7 +77,21 @@ def logout():
     session.clear()
     # redirect to the index page
     return redirect(url_for('index'))
+# delete user route which should delete the user from the userstore and redirect to the index page
 
+
+@app.route("/delete")
+def delete():
+    # get the user id from the session
+    user_id = session['user_id']
+    if user_id is None:
+        return redirect(url_for('index'))
+    # delete the user from the userstore
+    userstore.delete_user(user_id)
+    # clear the session
+    session.clear()
+    # redirect to the index page
+    return redirect(url_for('index'))
 # user page which should return the name and email of the user
 
 
@@ -74,12 +102,18 @@ def user():
     # get the user from the userstore
     user = userstore.get_user(user_id)
     # return the user page with the user
-    return render_template('user.html', username=user.name, email=user.email)
+
+    return render_template('user.html', username=user.name if user else None, email=user.email if user else None)
 
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 
 if __name__ == '__main__':

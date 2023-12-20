@@ -8,4 +8,7 @@
   <input type="password" id="password" name="password" required /><br /><br />
   <input type="submit" value="Login" />
 </form>
-{% endblock %}
+{% if error %}
+<h2 style="color: red">{{ error }}</h2>
+
+{% endif %} {% endblock %}

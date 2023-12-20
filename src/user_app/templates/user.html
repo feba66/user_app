@@ -9,6 +9,9 @@
   <label for="email">Email:</label>
   <span id="email">{{ email }}</span>
 </div>
+<div>
+  <span><a href="{{ url_for('delete') }}">Delete User</a></span>
+</div>
 {% else %}
 <p>You are not logged in. Please login to view your profile.</p>
 {% endif %} {% endblock %}

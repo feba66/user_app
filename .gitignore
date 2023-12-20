@@ -2,3 +2,4 @@ dist
 __pycache__
 pepper.txt
 .venv
+docker/data

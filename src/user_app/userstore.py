@@ -1,6 +1,7 @@
 from user_app.classes import random_string_generator
 from pyargon2 import hash
 from user_app.models import User
+from werkzeug.security import check_password_hash
 
 # class which stores users in a dictionary with the id as key, with a function to add a new user and generate the salt. Store the pepper in the class as well. auto increment the user ids
 
@@ -36,7 +37,7 @@ class UserStore:
             return "No such user"
         password_hash = hash(password, user.password_salt, self.pepper, self.__hash_len,
                              self.__time_cost, self.__memory_cost, self.__parralelism, encoding='b64')
-        if password_hash == user.password_hash:
+        if check_password_hash(password_hash, user.password_hash):
             return user
         return "Wrong password"
 

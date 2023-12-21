@@ -85,6 +85,42 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/auth', methods=['GET', 'POST'])
+def auth():
+    if request.method == 'POST':
+        name = request.form.get('username')
+        password = request.form.get('password')
+
+        user = userstore.login_user(name, password)
+        if isinstance(user, str):
+            return render_template('login.html', error=user)
+        session['user_id'] = user.id
+        session['user_name'] = user.name
+
+        if "redirect_uri" in session and "state" in session:
+            ruri = session["redirect_uri"]
+            session.pop("redirect_uri")
+            return redirect(f"{ruri}?code=1234&state={session['state']}")
+        else:
+            return redirect(url_for('index'))
+    else:
+        rt, cid, ruri = request.args.get("response_type"), request.args.get("client_id"), request.args.get("redirect_uri")
+        sc, st = request.args.get("scope"), request.args.get("state")
+        if rt != None and cid != None and ruri != None and sc != None and st != None:
+            if "user_id" in session:
+                # success
+                return redirect(f"{ruri}?code=1234")
+            else:
+                session["state"] = st
+                session["response_type"] = rt
+                session["client_id"] = cid
+                session["redirect_uri"] = ruri
+                session["scope"] = sc
+
+            return render_template("login.html")
+        return "hello,world"  # redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ", code=302)
+
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()

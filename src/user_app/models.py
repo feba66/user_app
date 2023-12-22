@@ -17,6 +17,7 @@ class User(Base):
     password_hash = Column(String(96))
     password_salt = Column(String(64))
     permissions = Column(Integer)
+    # last_login = Column(Integer)
 
     def __init__(self, name=None, email=None, password_hash=None, password_salt=None):
         self.name = name
@@ -30,6 +31,15 @@ class User(Base):
 
     def get_perms(self):
         return [p for p in Permissions if self.permissions & 2**p.value]
+
+    def set_perm(self, perm: Permissions, value: bool):
+        if value:
+            self.permissions |= 2**perm.value
+        else:
+            self.permissions &= ~2**perm.value
+
+    def has_perm(self, perm: Permissions):
+        return self.permissions & 2**perm.value
 
     def __repr__(self):
         return f'<User {self.name!r}>'

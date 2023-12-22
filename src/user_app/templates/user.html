@@ -1,6 +1,6 @@
 {% extends 'base.html' %} {% block header %}
 <h1>{% block title %}User Profile{% endblock %}</h1>
-{% endblock %} {% block content %} {% if session %}
+{% endblock %} {% block content %} {% if username %}
 <div>
   <label for="username">Username:</label>
   <span id="username">{{ username }}</span>

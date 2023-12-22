@@ -51,7 +51,7 @@ class UserStore:
     def delete_user(self, id):
         user = self.get_user(id)
         if user:
-            user.set_perms([Permissions.BANNED])
+            user.set_perm(Permissions.BANNED, True)
             self.db_session.commit()
             return Error("User deleted successfully")
         return Error("User not found")

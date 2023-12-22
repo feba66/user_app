@@ -24,7 +24,7 @@ class User(Base):
         self.email = email
         self.password_hash = password_hash
         self.password_salt = password_salt
-        self.permissions = Permissions.USER.value
+        self.permissions = 2**Permissions.USER.value
 
     def set_perms(self, perm: list[Permissions]):
         self.permissions = sum([2**p.value for p in perm])

@@ -9,7 +9,7 @@ from user_app.models import User
 
 """flask app that uses the userstore to register and login users, and stores the user id in the session"""
 
-SESSION_COOKIE_NAME = "test"
+SESSION_COOKIE_NAME = "user_app_session"
 
 app = Flask(__name__)
 app.secret_key = random_string_generator(64)
@@ -96,7 +96,7 @@ def register_route():
                 session_data["name"] = user.name
             else:
                 session_cookie = make_session_cookie({"id": user.id, "name": user.name})
-            if "state" in session_data and not "code" in session_data and "client_id" in session_data and "scope" in session_data:
+            if session_data and "state" in session_data and not "code" in session_data and "client_id" in session_data and "scope" in session_data:
                 session_data["code"] = random_string_generator(32)
                 clients[session_data["client_id"]]["grants"].append({"code": session_data["code"], "scope": session_data["scope"], "user_id": user.id})
                 return response_with_cookie(redirect(f"{session_data['redirect_uri']}?code={session_data['code']}&state={session_data['state']}"), session_cookie)
@@ -125,7 +125,7 @@ def login_route():
                 session_data["name"] = obj.name
             else:
                 session_cookie = make_session_cookie({"id": obj.id, "name": obj.name})
-            if "state" in session_data and not "code" in session_data and "client_id" in session_data and "scope" in session_data and "redirect_uri" in session_data:
+            if session_data and "state" in session_data and not "code" in session_data and "client_id" in session_data and "scope" in session_data and "redirect_uri" in session_data:
                 session_data["code"] = random_string_generator(32)
                 clients[session_data["client_id"]]["grants"].append(
                     {"code": session_data["code"], "scope": session_data["scope"], "user_id": session_data["id"]})
@@ -239,6 +239,7 @@ def api_user():
     if token != None and token in tokens:
         return json.dumps({"name": userstore.get_user(tokens[token]["user_id"]).name})
     return "Invalid token."
+
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

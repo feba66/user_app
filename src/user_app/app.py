@@ -237,7 +237,8 @@ def token_route():
 def api_user():
     token = request.headers.get("Authorization").removeprefix("Bearer ")
     if token != None and token in tokens:
-        return json.dumps({"name": userstore.get_user(tokens[token]["user_id"]).name})
+        user = userstore.get_user(tokens[token]["user_id"])
+        return json.dumps({"name": user.name, "id": user.id})
     return "Invalid token."
 
 

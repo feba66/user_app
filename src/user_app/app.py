@@ -98,7 +98,8 @@ def register_route():
                 session_cookie = make_session_cookie({"id": user.id, "name": user.name})
             if session_data and "state" in session_data and not "code" in session_data and "client_id" in session_data and "scope" in session_data:
                 session_data["code"] = random_string_generator(32)
-                clients[session_data["client_id"]]["grants"].append({"code": session_data["code"], "scope": session_data["scope"], "user_id": user.id})
+                clients[session_data["client_id"]]["grants"].append(
+                    {"code": session_data["code"], "scope": session_data["scope"], "user_id": user.id})
                 return response_with_cookie(redirect(f"{session_data['redirect_uri']}?code={session_data['code']}&state={session_data['state']}"), session_cookie)
 
             return response_with_cookie(redirect(url_for('index')), session_cookie)
@@ -195,7 +196,8 @@ def auth():
             session_data["client_id"] = cid
             session_data["scope"] = sc
             session_data["code"] = random_string_generator(32)
-            clients[session_data["client_id"]]["grants"].append({"code": session_data["code"], "scope": session_data["scope"], "user_id": session_data["id"]})
+            clients[session_data["client_id"]]["grants"].append(
+                {"code": session_data["code"], "scope": session_data["scope"], "user_id": session_data["id"]})
             return response_with_cookie(redirect(f"{ruri}?code={session_data["code"]}&state={st}"), session_cookie)
         else:
             if not session_cookie:
@@ -238,7 +240,7 @@ def api_user():
     token = request.headers.get("Authorization").removeprefix("Bearer ")
     if token != None and token in tokens:
         user = userstore.get_user(tokens[token]["user_id"])
-        return json.dumps({"name": user.name, "id": user.id})
+        return json.dumps({"name": user.name, "id": user.id, "email": user.email})
     return "Invalid token."
 
 

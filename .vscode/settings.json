@@ -1,5 +1,8 @@
 {
   "python.testing.pytestArgs": ["tests"],
   "python.testing.unittestEnabled": false,
-  "python.testing.pytestEnabled": true
+  "python.testing.pytestEnabled": true,
+  "prettier.configPath": "../.prettierrc",
+  "prettier.printWidth": 160,
+  "prettier.ignorePath": "../.prettierignore"
 }
